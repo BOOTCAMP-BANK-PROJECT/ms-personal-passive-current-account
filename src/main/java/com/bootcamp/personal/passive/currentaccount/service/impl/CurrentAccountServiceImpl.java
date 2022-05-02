@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Date;
+
 @Service
 @RequiredArgsConstructor
 public class CurrentAccountServiceImpl implements CurrentAccountService {
@@ -39,7 +41,12 @@ public class CurrentAccountServiceImpl implements CurrentAccountService {
                             "save.onErrorResume"
                     );
                 })
-                .switchIfEmpty(repository.save(currentAccount))
+                .switchIfEmpty(Mono.defer(() ->{
+                    currentAccount.setId(null);
+                    currentAccount.setInsertionDate(new Date());
+                    return repository.save(currentAccount);
+                }
+                ))
                 .onErrorResume(e -> Mono.error(e)).cast(CurrentAccount.class);
     }
 

@@ -19,5 +19,5 @@ springdoc:
   show-actuator: true
 
   # Tomcat Server Port
-  server:
-    port: 3000
+server:
+  port: 3000
